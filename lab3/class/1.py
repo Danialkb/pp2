@@ -7,6 +7,7 @@ class String:
     
     def print_string(self):
         return self.string.upper()
+        
 Mystr = String()
 Mystr.get_string(input())
 print(Mystr.print_string())
