@@ -2,6 +2,7 @@ import re
 
 a = input()
 
-pattern = r'.*(?P<naiti>a+.*b$)'
+pattern = r'.*a+.*b$'
 
 print('Nice!') if re.search(pattern, a) != None else print('FAIL')
+# fksfjsdfjadfhjsdfhuufeb  --- Nice!
