@@ -1,7 +1,3 @@
 import re
-
-name = input()
-
-pattern = r'(?<!^)(?=[A-Z])'
-name = re.sub(pattern, '_', name).lower()
-print(name)
+print(re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', input()).lower())
+# SnakeCase ---- snake_case
