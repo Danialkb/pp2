@@ -7,6 +7,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)   
 BLUE = (0, 0, 255)   
 BLACK = (0, 0, 0)
+palitra = pg.image.load('images/pal.png')
 d = {
     'rect': False,
     'circle': False,
@@ -72,8 +73,6 @@ def triangle(screen, posi, d, color):
     # x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     pg.draw.polygon(screen, color,  posi, d)
         
-    
-
 def circle(screen, cur, pos, t, color):
     x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     side1 = abs(x1-x2)
@@ -112,9 +111,13 @@ running = True
 
 while running:
     pos = pg.mouse.get_pos()
+    screen.blit(pg.transform.scale(palitra, (100, 100)), (0,0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if 0<= pos[0] <= 100 and 0<= pos[1] <= 100:
+                mycolour = screen.get_at(pos) 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_r: # выбираем прямоугольник
                 d['rect'] = True
@@ -151,15 +154,6 @@ while running:
                 for k, v in d.items():
                     if k != 'eraser':
                         d[k] = False
-
-            if event.key == pg.K_1: # выбираем красный цвет
-                mycolour = RED
-            if event.key == pg.K_2: # выбираем зеленый цвет
-                mycolour = GREEN
-            if event.key == pg.K_3: # выбираем синий цвет
-                mycolour = BLUE
-            if event.key == pg.K_4: # выбираем черный цвет
-                mycolour = BLACK
                     
         if d['rect'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
