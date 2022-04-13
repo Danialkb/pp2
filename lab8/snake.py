@@ -69,7 +69,7 @@ class Wall:
     def __init__(self, x, y):
         self.x, self.y = x, y
         self.im1 = pg.image.load('images/stena.png')
-        self.im2 = pg.image.load('images/dari.jpg')
+        # self.im2 = pg.image.load('images/dari.jpg')
 
     def draw(self):
         screen.blit(self.im1, (self.x, self.y))
