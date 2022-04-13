@@ -18,7 +18,7 @@ d = {
     'triangle': False
 }
 
-def rectangle(screen, cur, pos, d, color):
+def rectangle(screen, cur, pos, d, color): # функция рисования прямоугольника
     x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     side1 = abs(x1-x2)
     side2 = abs(y1-y2)
@@ -34,7 +34,7 @@ def rectangle(screen, cur, pos, d, color):
         else:
             pg.draw.rect(screen, color, (x2, y2, side1, side2), d)
 
-def square(screen, cur, pos, d, color):
+def square(screen, cur, pos, d, color): # функция для квадрата
     x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
 
     side1 = abs(x1-x2)
@@ -49,10 +49,11 @@ def square(screen, cur, pos, d, color):
     else:
         if y1 < y2:
             pg.draw.rect(screen, color, (x2, y1, side1, side2), d)
+            
         else:
             pg.draw.rect(screen, color, (x2, y2, side1, side2), d)
 
-def right_triangle(screen, cur, pos, d, color):
+def right_triangle(screen, cur, pos, d, color):# для прямоугольного тр-ка
     x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     difx = abs(x1-x2)
     dify = abs(y1-y2)
@@ -69,7 +70,7 @@ def right_triangle(screen, cur, pos, d, color):
             pg.draw.polygon(screen, color, [(x1, y1), (x1, y1 - dify), (x2, y2)], d)   
         
 
-def triangle(screen, posi, d, color):
+def triangle(screen, posi, d, color): # функция для равностороннего треугольника
     # x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     pg.draw.polygon(screen, color,  posi, d)
         
@@ -89,7 +90,7 @@ def circle(screen, cur, pos, t, color):
         else:
             pg.draw.ellipse(screen, color, (x2, y2, side1, side2), d)
 
-def rhombus(screen, cur, pos, d, color):
+def rhombus(screen, cur, pos, d, color): # функция для ромба
     x1 = cur[0]
     y1 = cur[1]
     x2 = pos[0]
@@ -102,7 +103,7 @@ def rhombus(screen, cur, pos, d, color):
 
 cur = (0, 0)
 t = 3
-draw_line = False
+
 eraser = False
 lastik_size = 50
 mycolour = (11, 102, 35) # по умолчанию цвет 'forest green'
@@ -110,14 +111,14 @@ mycolour = (11, 102, 35) # по умолчанию цвет 'forest green'
 running = True
 
 while running:
-    pos = pg.mouse.get_pos()
+    pos = pg.mouse.get_pos() # получаю текущую позицию моей мыши
     screen.blit(pg.transform.scale(palitra, (100, 100)), (0,0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
         if event.type == pg.MOUSEBUTTONDOWN:
             if 0<= pos[0] <= 100 and 0<= pos[1] <= 100:
-                mycolour = screen.get_at(pos) 
+                mycolour = screen.get_at(pos) # меняю цвет по pal.png
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_r: # выбираем прямоугольник
                 d['rect'] = True
@@ -157,7 +158,7 @@ while running:
                     
         if d['rect'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
-                cur = pos
+                cur = pos 
             if event.type == pg.MOUSEBUTTONUP:
                 rectangle(screen, cur, pos, t, mycolour)
         elif d['circle'] == 1:
