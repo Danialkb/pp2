@@ -1,9 +1,9 @@
 import pygame as pg
-
+from math import *
 pg.init()
 screen = pg.display.set_mode((800, 600))
 screen.fill((255, 255, 255))
-Rlastik_size = (255, 0, 0)   
+RED = (255, 0, 0)   
 GREEN = (0, 255, 0)   
 BLUE = (0, 0, 255)   
 BLACK = (0, 0, 0)
@@ -12,12 +12,13 @@ d = {
     'circle': False,
     'eraser': False,
     'square': False,
-    'triangle': False,
-    'rhombus': False
+    'right_triangle': False,
+    'rhombus': False,
+    'triangle': False
 }
 
-def rectangle(screen, cur, end, d, color):
-    x1, y1, x2, y2 = cur[0], cur[1], end[0], end[1]
+def rectangle(screen, cur, pos, d, color):
+    x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     side1 = abs(x1-x2)
     side2 = abs(y1-y2)
 
@@ -32,8 +33,8 @@ def rectangle(screen, cur, end, d, color):
         else:
             pg.draw.rect(screen, color, (x2, y2, side1, side2), d)
 
-def square(screen, cur, end, d, color):
-    x1, y1, x2, y2 = cur[0], cur[1], end[0], end[1]
+def square(screen, cur, pos, d, color):
+    x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
 
     side1 = abs(x1-x2)
     side2 = side1
@@ -50,26 +51,31 @@ def square(screen, cur, end, d, color):
         else:
             pg.draw.rect(screen, color, (x2, y2, side1, side2), d)
 
-def triangle(screen, cur, end, d, color):
-    x1, y1, x2, y2 = cur[0], cur[1], end[0], end[1]
+def right_triangle(screen, cur, pos, d, color):
+    x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     difx = abs(x1-x2)
     dify = abs(y1-y2)
     if x1 <= x2:
         if y1 < y2:
-            pg.draw.polygon(screen, color, [(x1, y1), (x1 - difx, y1 + dify), (x2, y2)], d)   
+            pg.draw.polygon(screen, color, [(x1, y1), (x1, y1 + dify), (x2, y2)], d)   
         else:
-            pg.draw.polygon(screen, color, [(x1, y1), (x1 - difx, y1 - dify), (x2, y2)], d)   
+            pg.draw.polygon(screen, color, [(x1, y1), (x1, y1 - dify), (x2, y2)], d)   
             
     else:
         if y1 < y2:
-            pg.draw.polygon(screen, color, [(x1, y1), (x1 + difx, y1 + dify), (x2, y2)], d)   
+            pg.draw.polygon(screen, color, [(x1, y1), (x1, y1 + dify), (x2, y2)], d)   
         else:
-            pg.draw.polygon(screen, color, [(x1, y1), (x1 + difx, y1 - dify), (x2, y2)], d)   
+            pg.draw.polygon(screen, color, [(x1, y1), (x1, y1 - dify), (x2, y2)], d)   
+        
+
+def triangle(screen, posi, d, color):
+    # x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
+    pg.draw.polygon(screen, color,  posi, d)
         
     
 
-def circle(screen, cur, end, t, color):
-    x1, y1, x2, y2 = cur[0], cur[1], end[0], end[1]
+def circle(screen, cur, pos, t, color):
+    x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     side1 = abs(x1-x2)
     side2 = abs(y1-y2)
 
@@ -84,19 +90,19 @@ def circle(screen, cur, end, t, color):
         else:
             pg.draw.ellipse(screen, color, (x2, y2, side1, side2), d)
 
-def rhombus(screen, cur, end, d, color):
+def rhombus(screen, cur, pos, d, color):
     x1 = cur[0]
     y1 = cur[1]
-    x2 = end[0]
-    y2 = end[1]
+    x2 = pos[0]
+    y2 = pos[1]
 
     difx = abs(x1-x2)
     dify = abs(y1-y2)
 
-    pg.draw.polygon(screen, color, [(x1, y1), (x1 - difx, y1 + dify//2), (x2, y2), (x1 + 2*difx, y1 + dify//2)], d)
+    pg.draw.polygon(screen, color, [(x1, y1), (x1 - difx, y1 + dify//2), (x2, y2), (x1 + 2*difx, y1 + dify//2)], 4)
 
-cur_pos = (0, 0)
-t = 2
+cur = (0, 0)
+t = 3
 draw_line = False
 eraser = False
 lastik_size = 50
@@ -105,7 +111,7 @@ mycolour = (11, 102, 35) # по умолчанию цвет 'forest green'
 running = True
 
 while running:
-    pos_mouse = pg.mouse.get_pos()
+    pos = pg.mouse.get_pos()
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
@@ -114,6 +120,11 @@ while running:
                 d['rect'] = True
                 for k, v in d.items():
                     if k != 'rect':
+                        d[k] = False
+            if event.key == pg.K_p: # выбираем правильный треугольник
+                d['triangle'] = True
+                for k, v in d.items():
+                    if k != 'triangle':
                         d[k] = False
             if event.key == pg.K_s: # выбираем square
                 d['square'] = True
@@ -125,10 +136,10 @@ while running:
                 for k, v in d.items():
                     if k != 'circle':
                         d[k] = False
-            if event.key == pg.K_t: # выбираем triangle
-                d['triangle'] = True
+            if event.key == pg.K_t: # выбираем прямоугольный треугольник
+                d['right_triangle'] = True
                 for k, v in d.items():
-                    if k != 'triangle':
+                    if k != 'right_triangle':
                         d[k] = False
             if event.key == pg.K_g: # выбираем ромб
                 d['rhombus'] = True
@@ -142,7 +153,7 @@ while running:
                         d[k] = False
 
             if event.key == pg.K_1: # выбираем красный цвет
-                mycolour = Rlastik_size
+                mycolour = RED
             if event.key == pg.K_2: # выбираем зеленый цвет
                 mycolour = GREEN
             if event.key == pg.K_3: # выбираем синий цвет
@@ -152,37 +163,42 @@ while running:
                     
         if d['rect'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
-                cur_pos = pos_mouse
+                cur = pos
             if event.type == pg.MOUSEBUTTONUP:
-                rectangle(screen, cur_pos, pos_mouse, t, mycolour)
+                rectangle(screen, cur, pos, t, mycolour)
         elif d['circle'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
-                cur_pos = pos_mouse
+                cur = pos
             if event.type == pg.MOUSEBUTTONUP:
-                circle(screen, cur_pos, pos_mouse, t, mycolour)
+                circle(screen, cur, pos, t, mycolour)
         elif d['square'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
-                cur_pos = pos_mouse
+                cur = pos
             if event.type == pg.MOUSEBUTTONUP:
-                square(screen, cur_pos, pos_mouse, t, mycolour)
+                square(screen, cur, pos, t, mycolour)
+        elif d['right_triangle'] == 1:
+            if event.type == pg.MOUSEBUTTONDOWN:
+                cur = pos
+            if event.type == pg.MOUSEBUTTONUP:
+                right_triangle(screen, cur, pos, t, mycolour)
         elif d['triangle'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
-                cur_pos = pos_mouse
+                cur = pos
             if event.type == pg.MOUSEBUTTONUP:
-                triangle(screen, cur_pos, pos_mouse, t, mycolour)
+                triangle(screen,[cur, pos,((pos[0] - cur[0])*cos(pi/3) - (pos[1] - cur[1])*sin(pi/3) + cur[0], (pos[0] - cur[0])*sin(pi/3) + (pos[1] - cur[1])*cos(pi/3) + cur[1])], t, mycolour)
         elif d['rhombus'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
-                cur_pos = pos_mouse
+                cur = pos
             if event.type == pg.MOUSEBUTTONUP:
-                rhombus(screen, cur_pos, pos_mouse, t, mycolour)
+                rhombus(screen, cur, pos, t, mycolour)
         elif d['eraser'] == 1:
             if event.type == pg.MOUSEBUTTONDOWN:
-                (x, y) = pos_mouse
+                (x, y) = pos
                 pg.draw.rect(screen, (255, 255, 255), (x, y, lastik_size, lastik_size))
                 eraser = True
             if event.type == pg.MOUSEMOTION:
                 if eraser:
-                    pg.draw.rect(screen, (255, 255, 255), (pos_mouse[0], pos_mouse[1], lastik_size, lastik_size))
+                    pg.draw.rect(screen, (255, 255, 255), (pos[0], pos[1], lastik_size, lastik_size))
             if event.type == pg.MOUSEBUTTONUP:
                 eraser = False
 
