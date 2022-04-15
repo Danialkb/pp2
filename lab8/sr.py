@@ -149,8 +149,8 @@ while True:
     coin_collected = coin_font.render(f'{coin}', True, BLACK)
     SURF.blit(score_img, (10, 10)) # текущий счет
     SURF.blit(coin_collected, (350, 10)) # количество очков с собранных монет
-    if coin % 10 == 0 and coin > 0: # при получении каждой 10-й монеты увеличиваем скорость игрока
-        STEP += 5
+    if coin % 10 == 0 and coin > 0: # при получении каждой 10-й монеты увеличиваем скорость вражеской машины
+        ENEMTY_STEP += 2
     while lose: # окно проигрыша
         pg.mixer.music.stop()
         clock.tick(FPS)
