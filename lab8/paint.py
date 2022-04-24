@@ -155,37 +155,37 @@ while running:
                     if k != 'eraser':
                         d[k] = False
                     
-        if d['rect'] == 1:
+        if d['rect'] == True:
             if event.type == pg.MOUSEBUTTONDOWN:
                 cur = pos 
             if event.type == pg.MOUSEBUTTONUP:
                 rectangle(screen, cur, pos, t, mycolour)
-        elif d['circle'] == 1:
+        elif d['circle'] == True:
             if event.type == pg.MOUSEBUTTONDOWN:
                 cur = pos
             if event.type == pg.MOUSEBUTTONUP:
                 circle(screen, cur, pos, t, mycolour)
-        elif d['square'] == 1:
+        elif d['square'] == True:
             if event.type == pg.MOUSEBUTTONDOWN:
                 cur = pos
             if event.type == pg.MOUSEBUTTONUP:
                 square(screen, cur, pos, t, mycolour)
-        elif d['right_triangle'] == 1:
+        elif d['right_triangle'] == True:
             if event.type == pg.MOUSEBUTTONDOWN:
                 cur = pos
             if event.type == pg.MOUSEBUTTONUP:
                 right_triangle(screen, cur, pos, t, mycolour)
-        elif d['triangle'] == 1:
+        elif d['triangle'] == True:
             if event.type == pg.MOUSEBUTTONDOWN:
                 cur = pos
             if event.type == pg.MOUSEBUTTONUP:
                 triangle(screen,[cur, pos,((pos[0] - cur[0])*cos(pi/3) - (pos[1] - cur[1])*sin(pi/3) + cur[0], (pos[0] - cur[0])*sin(pi/3) + (pos[1] - cur[1])*cos(pi/3) + cur[1])], t, mycolour)
-        elif d['rhombus'] == 1:
+        elif d['rhombus'] == True:
             if event.type == pg.MOUSEBUTTONDOWN:
                 cur = pos
             if event.type == pg.MOUSEBUTTONUP:
                 rhombus(screen, cur, pos, t, mycolour)
-        elif d['eraser'] == 1:
+        elif d['eraser'] == True:
             if event.type == pg.MOUSEBUTTONDOWN:
                 (x, y) = pos
                 pg.draw.rect(screen, (255, 255, 255), (x, y, lastik_size, lastik_size))

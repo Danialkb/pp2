@@ -32,14 +32,16 @@ pg.init()
 
 lose = False
 WIDTH, HEIGHT = 800, 800
-FPS = 5
+FPS = 7
 cell = 40 
 image = pg.image.load('images/backforsnake.jpg')
 font_score = pg.font.SysFont('Times New Roman', 30, True, True)
-
+collided = False
 rand_apple = 0
 
 pg.mixer.music.load('sound/mus1.mp3')
+TIMER = 5000
+pg.mixer.music.load('sound/mus.mp3')
 pg.mixer.music.play(-1)
 levelcnt = pg.font.SysFont('Times New Roman', 30, True, True)
 current_lev = 1
@@ -57,7 +59,6 @@ running = True
 
 clock = pg.time.Clock()
 
-
 class Food:
     def __init__(self):
         global rand_apple
@@ -68,12 +69,10 @@ class Food:
         # self.r = 20
         self.im = pg.image.load(f'images/apple{self.rand}.png')
 
-
     def draw(self):
 
         screen.blit(self.im, (self.x, self.y)) # отображаю картинки моей еды
-        
-        # pg.draw.circle(screen, RED, (self.x + self.r, self.y + self.r), self.r)
+
 
     def redraw(self): # функция перерисовки(чтобы еда не появлялась на стенах или на змейке)
         global rand_apple
@@ -142,18 +141,16 @@ class Snake:
     
     def collision_food(self, f:Food): 
         if self.body[0][0] == f.x and self.body[0][1] == f.y: # коллизию с яблоком
-            global score
+            global score, collided
             if rand_apple == 0:
                 score += 10
             elif rand_apple == 1:        # увеличиваем счет в зависимости от того какое яблоко съела змейка
                 score += 20
             elif rand_apple == 2:
                 score += 30
-            # eli == 5:
-            #     score += 50
             self.body.append([1000, 1000])
-            
-    
+            collided = True
+
     def collision_self(self):
         global running, lose
         if self.body[0] in self.body[1:]: # проигрыш если он сталкивается сам с собой
@@ -165,13 +162,17 @@ class Snake:
             f.redraw()
 
 
+def wash():
+    pg.time.set_timer(pg.USEREVENT, TIMER) # таймер для исчезания еды
 S1 = Snake()
 F1 = Food()
-pg.time.set_timer(pg.USEREVENT, 5000) # таймер для исчезания еды
 
 score = 0
 highscore = 0
 level = 1
+
+wash()
+
 
 while not lose:
     clock.tick(FPS)
@@ -199,14 +200,14 @@ while not lose:
 
     if score >= 150 and score < 350:  # переходы на следующие уровни      
         level = 2                      
-        FPS = 7
+        FPS = 7                    
+        FPS = 10
         current_lev = 2
 
     if score >= 350:
         level = 3
         current_lev = 3
-        FPS = 10    
-
+        FPS = 12   
     F1.draw()
     S1.draw()
     S1.move(events)
@@ -215,10 +216,13 @@ while not lose:
     S1.eat_food(F1)
 
 
-
+    if collided == True:
+        TIMER = 5000
+        wash()
+        collided = False
     for wall in walls:
         wall.draw()
-        if F1.x == wall.x and F1.y == wall.y: # если еда появляется на стенах переисовываю их
+        if F1.x == wall.x and F1.y == wall.y: # если еда появляется на стенах переисовываю ее
             F1.redraw()
         if S1.body[0][0] == wall.x and S1.body[0][1] == wall.y: # коллизия со стенками
             lose = True
