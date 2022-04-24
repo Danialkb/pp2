@@ -22,7 +22,6 @@ def rectangle(screen, cur, pos, d, color): # функция рисования �
     x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     side1 = abs(x1-x2)
     side2 = abs(y1-y2)
-
     if x1 <= x2:
         if y1 < y2:
             pg.draw.rect(screen, color, (x1, y1, side1, side2), d)
@@ -74,7 +73,7 @@ def triangle(screen, posi, d, color): # функция для равностор
     # x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     pg.draw.polygon(screen, color,  posi, d)
         
-def circle(screen, cur, pos, t, color):
+def circle(screen, cur, pos, d, color):
     x1, y1, x2, y2 = cur[0], cur[1], pos[0], pos[1]
     side1 = abs(x1-x2)
     side2 = abs(y1-y2)

@@ -2,26 +2,44 @@ import pygame as pg
 from random import randint, randrange
 import time
 import json
+import psycopg2
 
+username = input()
+config = psycopg2.connect(
+    host='localhost',
+    database='postgres',
+    user='postgres',
+    password='Dankb2131193*'
+)
+
+current = config.cursor()
+
+sql = '''
+    SELECT * FROM snakeusers WHERE username = %s;
+'''
+current.execute(sql, [username])
+data = current.fetchone()
+
+if data == None:
+    sql = '''
+        INSERT INTO snakeusers VALUES(%s, 0, 0);
+    '''
+    current.execute(sql, [username])
+    config.commit()
+else: 
+    print(data)
 pg.init()
 
-
-
-with open('high.json', 'r', encoding='utf8') as f:
-    x = f.read() 
-
-d = json.loads(x)
 lose = False
 WIDTH, HEIGHT = 800, 800
 FPS = 5
 cell = 40 
 image = pg.image.load('images/backforsnake.jpg')
-score = 0
 font_score = pg.font.SysFont('Times New Roman', 30, True, True)
 
 rand_apple = 0
 
-pg.mixer.music.load('sound/mus.mp3')
+pg.mixer.music.load('sound/mus1.mp3')
 pg.mixer.music.play(-1)
 levelcnt = pg.font.SysFont('Times New Roman', 30, True, True)
 current_lev = 1
@@ -151,13 +169,16 @@ S1 = Snake()
 F1 = Food()
 pg.time.set_timer(pg.USEREVENT, 5000) # таймер для исчезания еды
 
-level = 0
+score = 0
+highscore = 0
+level = 1
 
-while running:
+while not lose:
     clock.tick(FPS)
     events = pg.event.get()
     for event in events:
         if event.type == pg.QUIT:
+            lose = True
             running = False
 
         if event.type == pg.USEREVENT:
@@ -166,7 +187,7 @@ while running:
         
     screen.blit(pg.transform.scale(image, (800,800)), (0, 0))
     
-    walls_file = open(f'wall{level}.txt', 'r').readlines() # открываю файл с паттерном текущего уровня
+    walls_file = open(f'wall{level-1}.txt', 'r').readlines() # открываю файл с паттерном текущего уровня
 
 
     walls = []
@@ -177,12 +198,12 @@ while running:
                 walls.append(Wall(j * cell, i * cell)) # рисовка стен с помощью паттернов записанных в txt файлах
 
     if score >= 150 and score < 350:  # переходы на следующие уровни      
-        level = 1                      
+        level = 2                      
         FPS = 7
         current_lev = 2
 
     if score >= 350:
-        level = 2
+        level = 3
         current_lev = 3
         FPS = 10    
 
@@ -208,21 +229,23 @@ while running:
     textlvl = levelcnt.render(f'{current_lev}', True, BLACK)
     screen.blit(textscore, (10, 10)) # отображаю текущий счет
     screen.blit(textlvl, (780, 10)) # отображаю текущий уровень
-    while lose: # окно проигрыша
-        pg.mixer.music.stop()
-        clock.tick(FPS)
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-        # screen.fill(BLACK)
-        screen.blit(pg.transform.scale(lose_im, (800, 800)), (0, 0))
+    # while lose: # окно проигрыша
+    #     pg.mixer.music.stop()
+    #     clock.tick(FPS)
+    #     for event in pg.event.get():
+    #         if event.type == pg.QUIT:
+    #             pg.quit()
+    #     # screen.fill(BLACK)
+    #     screen.blit(pg.transform.scale(lose_im, (800, 800)), (0, 0))
         
-        pg.display.flip()
+    #     pg.display.flip()
     pg.display.flip()
-
-if d['highscore_for_snake'] < score:
-            d['highscore_for_snake'] = score
-            with open('high.json', 'w', encoding='utf8') as f:
-                f.write(json.dumps(d, indent=4))
-                # записывает наилучший результат
+    
+sql = '''
+    UPDATE snakeusers SET score = %s, level = %s WHERE username = %s;
+'''
+current.execute(sql, [score, level, username])
+config.commit()
+current.close()
+config.close()
 pg.quit()

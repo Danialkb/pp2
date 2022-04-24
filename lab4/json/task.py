@@ -16,5 +16,6 @@ for j in range(len(d['imdata'])):
         if len(i['attributes']['dn'])  == 41:
             print(i['attributes']['dn'], ' '*17, i['attributes']['speed'], ' '*3, i['attributes']['mtu'])
 
+
         else:
             print(i['attributes']['dn'], ' '*16, i['attributes']['speed'], ' '*3, i['attributes']['mtu'])
