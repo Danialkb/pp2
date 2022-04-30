@@ -9,7 +9,7 @@ config = psycopg2.connect(
 current = config.cursor()
 sql1 = '''
     CREATE TABLE phonebook(
-        id VARCHAR(200),
+        id INTEGER PRIMARY KEY,
         name VARCHAR(200),
         number VARCHAR(200)
     )

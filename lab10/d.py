@@ -15,11 +15,12 @@ sql = '''
 '''
 
 sql2 = '''
-    SELECT * FROM phonebook ORDER BY number ASC
+    SELECT * FROM phonebook ORDER BY id DESC
 '''
 
 current.execute(sql2)
-
+final = current.fetchall()
+print(final)
 current.close()
 config.commit()
 config.close()
