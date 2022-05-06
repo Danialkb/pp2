@@ -19,7 +19,7 @@ def create_func(query):
         if connection: 
             cursor.close() 
             connection.close() 
-            print('Procedure is created') 
+            print('Function is created') 
  
  
 postgresql_func = """ 

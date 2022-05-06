@@ -51,7 +51,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 WALLCOLOR = (127, 72, 41)
-
+surf = pg.Surface(400, 400)
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption('ZHYLAN')
 lose_im = pg.image.load('images/lose.png')
@@ -166,7 +166,7 @@ def wash():
     pg.time.set_timer(pg.USEREVENT, TIMER) # таймер для исчезания еды
 S1 = Snake()
 F1 = Food()
-
+pause = False
 score = 0
 highscore = 0
 level = 1
@@ -181,7 +181,9 @@ while not lose:
         if event.type == pg.QUIT:
             lose = True
             running = False
-
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_SPACE:
+                pause = True 
         if event.type == pg.USEREVENT:
             F1.redraw() # 5 секунд прошло еда исчезла
         
@@ -233,16 +235,30 @@ while not lose:
     textlvl = levelcnt.render(f'{current_lev}', True, BLACK)
     screen.blit(textscore, (10, 10)) # отображаю текущий счет
     screen.blit(textlvl, (780, 10)) # отображаю текущий уровень
-    # while lose: # окно проигрыша
-    #     pg.mixer.music.stop()
-    #     clock.tick(FPS)
-    #     for event in pg.event.get():
-    #         if event.type == pg.QUIT:
-    #             pg.quit()
-    #     # screen.fill(BLACK)
-    #     screen.blit(pg.transform.scale(lose_im, (800, 800)), (0, 0))
-        
-    #     pg.display.flip()
+    while paused: 
+        clock.tick(FPS)
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                is_running = False
+                paused = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_u:
+                    paused = False # возобнавляем игру
+                if event.key == pg.K_c:
+                    a = score# обновляем текущие данные в базе данных
+                    sql = '''
+                        UPDATE users SET score = %s, level = %s WHERE username = %s;
+                    '''
+                    current.execute(sql, [a, level, username])
+                    config.commit()
+        screen.blit(surf, (200, 200))
+        cntr = score.render(f'Your score is {score}', True, 'white')
+        screen.blit(cntr, (315, 350))
+        l = score.render(f'Your level is {level}', True, 'white')
+        screen.blit(l, (317, 385))
+        txt = score.render(f'Press "C" to save your current state', True, 'white')
+        screen.blit(txt, (212, 420))
+        pg.display.flip()
     pg.display.flip()
     
 sql = '''

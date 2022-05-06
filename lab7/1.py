@@ -1,4 +1,3 @@
-from multiprocessing.spawn import prepare
 import pygame as pg 
 import math
 from datetime import datetime

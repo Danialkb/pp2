@@ -7,13 +7,13 @@ pg.init()
 
 with open('high.json', 'r', encoding='utf8') as f:
     x = f.read()
-
+n = 0
 d = json.loads(x)
 FPS = 60
 WIDTH = 400
 HEIGHT = 600
 STEP = 5
-ENEMTY_STEP = 10
+ENEMTY_STEP = 7
 lose = False
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -98,7 +98,7 @@ P1 = Player()
 E1 = Enemy()
 C1 = Coin()
 y = 0
-
+check = True
 enemies =  pg.sprite.Group()
 enemies.add(E1)
 
@@ -135,10 +135,13 @@ while True:
             monetka.kill() 
             if rand_im == 0:    # score увеличивается на 1 для картинки с номером 0
                 coin += 1
+                n += 1
             elif rand_im == 1: # score увеличивается на 5 для картинки с номером 1
                 coin += 5
+                n += 1
             elif rand_im == 2:  # score увеличивается на 10 для картинки с номером 2
                 coin += 10
+                n += 1
 
             newC = Coin()
             monetki.add(newC) # старая монетка "умирает" -----> в рандомном месте появляется новая
@@ -149,8 +152,9 @@ while True:
     coin_collected = coin_font.render(f'{coin}', True, BLACK)
     SURF.blit(score_img, (10, 10)) # текущий счет
     SURF.blit(coin_collected, (350, 10)) # количество очков с собранных монет
-    if coin % 10 == 0 and coin > 0: # при получении каждой 10-й монеты увеличиваем скорость вражеской машины
-        ENEMTY_STEP += 2
+    if n  ==  10 and check: # при получении n-й монеты увеличиваем скорость вражеской машины
+        ENEMTY_STEP += 5
+        check = False
     while lose: # окно проигрыша
         pg.mixer.music.stop()
         clock.tick(FPS)
